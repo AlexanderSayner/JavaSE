@@ -1,11 +1,11 @@
 # Игнорирование всех файлов и папок в ЛЮБЫХ директориях с указанным именем
-build/*
-target/*
-.gradle/*
-.idea/*
-gradle/*
-logs/*
-out/*
+build
+target
+.gradle
+.idea
+gradle
+logs
+out
 gradlew
 
 # Compiled class file
