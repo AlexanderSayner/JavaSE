@@ -6,17 +6,43 @@ import sayner.sandbox.gruzchik.pattern.mediator.ColleagueMediator;
 import sayner.sandbox.gruzchik.pattern.observer.Observer;
 import sayner.sandbox.gruzchik.pattern.observer.impl.CurrentConditionsDisplay;
 import sayner.sandbox.gruzchik.pattern.observer.impl.WeatherData;
-import sayner.sandbox.liba.Simple;
+import sayner.sandbox.liba.entities.Airport;
+import sayner.sandbox.liba.entities.Plane;
+import sayner.sandbox.liba.entities.Section;
+import sayner.sandbox.liba.entities.sectionsimpl.CasualSection;
+import sayner.sandbox.liba.entities.sectionsimpl.HermeticSection;
+import sayner.sandbox.liba.entities.sectionsimpl.StableTemperatureSection;
+import sayner.sandbox.liba.observer.exd.PlaneDestinationData;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Log4j2
 public class Application {
 
     protected static void externalLibExample() {
 
-        Simple simple = new Simple();
-        simple.setValue(666999);
+        // Инициализация обсерверов
+        Airport airport = new Airport("раз");
+        Airport airport1 = new Airport("два");
+        Airport airport2 = new Airport("тры");
 
-        log.info("Из моей личной библиотеки: " + simple.getValue());
+        // Сейчас обсы безполезны
+        // Но стоит их отправить к надзирателю
+        PlaneDestinationData planeDestinationData = new PlaneDestinationData();
+        planeDestinationData.registerObserver(airport);
+        planeDestinationData.registerObserver(airport1);
+        planeDestinationData.registerObserver(airport2);
+        // как дело принимает интересный оборот
+
+        Set<Section> sections = new HashSet<>();
+        sections.add(new CasualSection(200.0f));
+        sections.add(new HermeticSection(200.0f));
+        sections.add(new StableTemperatureSection(200.0f));
+
+        Plane plane = Plane.builder().ownWeight(5000.0f).carrying(2000.0f).sections(sections).build();
+        // Добавив данные сюда
+        planeDestinationData.addNewPlaneInTheAirport(plane, airport);
 
     }
 
@@ -70,7 +96,7 @@ public class Application {
         thread.setName("Пример библиотеки");
 
         Thread thread1 = new Thread(Application::observerPatternExample);
-        thread1.setName("Observer pattern example");
+        thread1.setName("PlaneObserver pattern example");
 
         Thread thread2 = new Thread(Application::mediatorPatternExample);
         thread2.setName("Mediator pattern example");

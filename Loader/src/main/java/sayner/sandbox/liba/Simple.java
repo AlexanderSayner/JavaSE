@@ -2,9 +2,9 @@ package sayner.sandbox.liba;
 
 public class Simple {
 
-    private int value;
+    private Integer value;
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
