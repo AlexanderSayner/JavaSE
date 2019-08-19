@@ -1,5 +1,7 @@
 # Игнорирование всех файлов и папок в ЛЮБЫХ директориях с указанным именем
 build/*
+Executable/build/*
+Loader/build/*
 target/*
 .gradle/*
 .idea/*
