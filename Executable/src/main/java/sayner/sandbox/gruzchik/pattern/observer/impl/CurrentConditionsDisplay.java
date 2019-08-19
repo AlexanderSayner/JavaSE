@@ -25,6 +25,6 @@ public class CurrentConditionsDisplay implements Observer {
     }
 
     public void display() {
-        log.info("Сейчас значения:%.1f градусов цельсия и %.1f %% влажности. Давление %d мм рт. ст.\n", temperature, humidity, pressure);
+        log.info(String.format("Сейчас значения:%.1f градусов цельсия и %.1f %% влажности. Давление %d мм рт. ст.\n", temperature, humidity, pressure));
     }
 }
