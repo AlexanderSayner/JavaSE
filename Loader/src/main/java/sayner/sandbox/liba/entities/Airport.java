@@ -2,6 +2,7 @@ package sayner.sandbox.liba.entities;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import sayner.sandbox.liba.observer.exd.PlaneDestinationObserver;
 
@@ -11,6 +12,7 @@ import java.util.Map;
 /**
  * Все аэропорты будут обсерверами
  */
+@Getter
 @Log4j2
 public class Airport implements PlaneDestinationObserver {
 

@@ -23,6 +23,7 @@ public final class Plane {
     @Setter(AccessLevel.PRIVATE)
     private Float tonnage;
 
+    // Было бы круто, чтобы прям самолёт открывал доступ к определённым секциям
     private Set<Section> sections;
 
     /**

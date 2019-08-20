@@ -15,4 +15,6 @@ public final class Cargo {
 
     // Объём
     private Float volume;
+
+    private CargoState cargoState;
 }

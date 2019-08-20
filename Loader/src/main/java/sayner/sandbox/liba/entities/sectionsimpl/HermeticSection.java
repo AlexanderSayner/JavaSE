@@ -20,9 +20,16 @@ public class HermeticSection extends AbstractSection {
 
     @Override
     public Cargo submerge(Cargo cargo) {
+        if (getVolumeRemaining() >= cargo.getVolume()) {
 
-        super.getPayload().add(cargo);
-        log.info(String.format("Произведена загрузка %s в герметичную секцию", cargo.getName()));
-        return cargo;
+            // Всё ок, грузим
+            super.getPayload().add(cargo);
+            log.info(String.format("Произведена загрузка %s в герметичную секцию", cargo.getName()));
+            return cargo;
+        } else /* Экзепшен */ {
+
+            log.info(String.format("В герметичной секции не хватило места для %s", cargo.getName()));
+            return null;
+        }
     }
 }

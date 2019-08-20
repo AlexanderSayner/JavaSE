@@ -21,8 +21,16 @@ public class StableTemperatureSection extends AbstractSection {
     @Override
     public Cargo submerge(Cargo cargo) {
 
-        super.getPayload().add(cargo);
-        log.info(String.format("Произведена загрузка %s в секцию стабильной температуры", cargo.getName()));
-        return cargo;
+        if (getVolumeRemaining() >= cargo.getVolume()) {
+
+            // Всё ок, грузим
+            super.getPayload().add(cargo);
+            log.info(String.format("Произведена загрузка %s в секцию стабильной температуры", cargo.getName()));
+            return cargo;
+        } else /* Экзепшен */ {
+
+            log.info(String.format("В секции стабильной температуры не хватило места для %s", cargo.getName()));
+            return null;
+        }
     }
 }
