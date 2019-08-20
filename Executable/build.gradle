@@ -2,10 +2,12 @@ plugins {
     id 'application'
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 group 'sayner.sandbox.gruzchik'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
 mainClassName = 'sayner.sandbox.gruzchik.Application'
 
 dependencies {
@@ -21,6 +23,7 @@ dependencies {
 
     // Родная либа
     implementation project(":Loader")
+    implementation project(":VersionList")
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

@@ -2,10 +2,11 @@ plugins {
     id 'java'
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 group 'sayner.sandbox.versionlist'
 version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
 
 dependencies {
 
