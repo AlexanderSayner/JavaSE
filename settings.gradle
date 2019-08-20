@@ -1,3 +1,5 @@
 rootProject.name = 'Gruzchik_Multiproject'
 include 'Loader'
 include 'Executable'
+include 'VersionList'
+
