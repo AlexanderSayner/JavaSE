@@ -8,7 +8,9 @@ import sayner.sandbox.liba.entities.sectionsimpl.HermeticSection;
 import sayner.sandbox.liba.entities.sectionsimpl.StableTemperatureSection;
 import sayner.sandbox.liba.mediator.LoadMaster;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -41,13 +43,13 @@ public final class LoadMasterImpl implements LoadMaster {
                             if (overloadedSection instanceof HermeticSection) {
 
                                 // Если операция вообще имеет смысл
-                                if(overloadedSection.getVolume()<=cargo.getVolume()){
+                                if (overloadedSection.getVolume() <= cargo.getVolume()) {
 
                                     // Перед этим было бы неплохо сделать сортировку груза по объёму
                                     // Во всём коде имеет смысл для Set<Cargo> делать реализацию TreeSet<>
-                                    for (Cargo overloadedCargo:overloadedSection.getPayload()){
+                                    for (Cargo overloadedCargo : overloadedSection.getPayload()) {
 
-                                        if(overloadedCargo.getCargoState()!=CargoState.Alive && overloadedSection.submerge(cargo)==null){
+                                        if (overloadedCargo.getCargoState() != CargoState.Alive && overloadedSection.submerge(cargo) == null) {
                                             // Вот так неповезло overloadedCargo
                                             overloadedSection.getPayload().remove(overloadedCargo);
                                             // Сущности будут выбрасоваться безвозратно (временно решение, код не позволяет легко выйти из ситуации)
@@ -81,13 +83,13 @@ public final class LoadMasterImpl implements LoadMaster {
                             if (overloadedSection instanceof StableTemperatureSection) {
 
                                 // Если операция вообще имеет смысл
-                                if(overloadedSection.getVolume()<=cargo.getVolume()){
+                                if (overloadedSection.getVolume() <= cargo.getVolume()) {
 
                                     // Перед этим было бы неплохо сделать сортировку груза по объёму
                                     // Во всём коде имеет смысл для Set<Cargo> делать реализацию TreeSet<>
-                                    for (Cargo overloadedCargo:overloadedSection.getPayload()){
+                                    for (Cargo overloadedCargo : overloadedSection.getPayload()) {
 
-                                        if(overloadedCargo.getCargoState()!=CargoState.Alive && overloadedSection.submerge(cargo)==null){
+                                        if (overloadedCargo.getCargoState() != CargoState.Alive && overloadedSection.submerge(cargo) == null) {
                                             // Вот так неповезло overloadedCargo
                                             overloadedSection.getPayload().remove(overloadedCargo);
                                             // Сущности будут выбрасоваться безвозратно (временно решение, код не позволяет легко выйти из ситуации)

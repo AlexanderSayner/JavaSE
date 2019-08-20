@@ -1,8 +1,5 @@
 package sayner.sandbox.liba.observer;
 
-import sayner.sandbox.liba.entities.Airport;
-import sayner.sandbox.liba.entities.Plane;
-
 /**
  * Интерфейс, с помощью которого наблюдатель получает оповещение (например)
  */

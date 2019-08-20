@@ -6,6 +6,8 @@ package sayner.sandbox.gruzchik.pattern.observer;
 public interface Observable {
 
     void registerObserver(Observer o);
+
     void removeObserver(Observer o);
+
     void notifyObservers();
 }
