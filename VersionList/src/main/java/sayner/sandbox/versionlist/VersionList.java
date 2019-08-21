@@ -2,18 +2,17 @@ package sayner.sandbox.versionlist;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneable, Serializable {
 
     private static final int DEFAULT_CAPACITY = 10;
     private static final Object[] EMPTY_ELEMENTDATA = new Object[0];
     private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = new Object[0];
-    transient Object[] internal = {};
+    private transient Object[] internal = {};
     private int size;
     private static final int MAX_ARRAY_SIZE = 2147483639;
+
+    private List<Modification<E>> modifications = new ArrayList<>();
 
     //
     // Конструкторы
@@ -106,13 +105,17 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     /**
      * Отсечка памяти
+     * Метод бессмысленен, так как провоцирует ошибку java.lang.ArrayIndexOutOfBoundsException
+     * В ином же случае OutOfMemoryException, так как неизвество наверняка сколько занимает памяти Object и сколько памяти доступно
+     *
      * @param minCapacity
      * @return кол-во элементов, а много не вернёт
      */
+    @Deprecated
     private static int hugeCapacity(int minCapacity) {
 
         if (minCapacity < 0) {
-            throw new OutOfMemoryError();
+            throw new OutOfMemoryError("Попытка выделить отрицательное значение памяти");
         } else {
             return minCapacity > 2147483639 ? 2147483647 : 2147483639;
         }
@@ -120,26 +123,35 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     /**
      * Вычисление нового объёма памяти массива
+     *
      * @param minCapacity
      * @return
      */
+    @Deprecated
     private int newCapacity(int minCapacity) {
 
-        int oldCapacity = this.internal.length;
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
+        int oldCapacity = this.internal.length; // сколько было
+        int newCapacity = oldCapacity + (oldCapacity >> 1); // Чем больше элементов добавляется, тем большими скачками памяти выделяется
+        // Если минимум надо больше, чем выделили
         if (newCapacity - minCapacity <= 0) {
             if (this.internal == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
                 return Math.max(10, minCapacity);
             } else if (minCapacity < 0) {
-                throw new OutOfMemoryError();
+                throw new OutOfMemoryError("Попытка выделить отрицательное значение памяти");
             } else {
-                return minCapacity;
+                return minCapacity; // А хрен с ним, даём сколько надо
             }
         } else {
             return newCapacity - 2147483639 <= 0 ? newCapacity : hugeCapacity(minCapacity);
         }
     }
 
+    /**
+     * Выделение памяти
+     *
+     * @param minCapacity
+     * @return
+     */
     private Object[] grow(int minCapacity) {
         // Расширяем массив
         return this.internal = Arrays.copyOf(this.internal, this.newCapacity(minCapacity));
@@ -151,7 +163,8 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     /**
      * Конечка по пути к добавлению элемента
-     * @param element новый элемент
+     *
+     * @param element      новый элемент
      * @param thisInternal текущий массив передаётся сюда те
      * @param size
      */
@@ -164,6 +177,7 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         }
 
         thisInternal[size] = element; // Ставим новый элемент на +1 место
+
         this.size = size + 1; // Индексируем
     }
 
@@ -179,6 +193,7 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     /**
      * Простой get
+     *
      * @param index
      * @return
      */
@@ -188,6 +203,7 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     /**
      * Удаляшка
+     *
      * @param array Массив, из которого необходи удалить элемент
      * @param index Индекс элемента
      */
@@ -207,13 +223,6 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
     //
     // public methods
     //
-
-    public boolean add(E element){
-
-        ++this.modCount;
-        this.add(element, this.internal, this.size);
-        return true;
-    }
 
     public Object[] toArray() {
         return Arrays.copyOf(this.internal, this.size);
@@ -247,9 +256,10 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         }
     }
 
+
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return this.listIterator();
     }
 
     @Override
@@ -259,6 +269,7 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     /**
      * Добавить в конец
+     *
      * @param collection - то, что добавляем
      * @return ну, как, добавилось?
      */
@@ -338,7 +349,8 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
     /**
      * Вернёт старое значение, что очень удобно
      * встроена проверка существования индекса
-     * @param index на это место встанет
+     *
+     * @param index   на это место встанет
      * @param element новый элемент
      * @return старое значение
      */
@@ -349,6 +361,13 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         E oldValue = this.internal(index);
         this.internal[index] = element;
         return oldValue;
+    }
+
+    public boolean add(E element) {
+
+        ++this.modCount;
+        this.add(element, this.internal, this.size);
+        return true;
     }
 
     @Override
@@ -365,6 +384,9 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         System.arraycopy(elementData, index, elementData, index + 1, s - index);
         elementData[index] = element;
         this.size = s + 1;
+
+        // Фиксация изменений
+        Modification<E> eModification=new Modification<>();
     }
 
     @Override
@@ -379,26 +401,88 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        return this.indexOfRange(o, 0, this.size);
+    }
+
+    int indexOfRange(Object o, int start, int end) {
+
+        Object[] es = this.internal;
+        int i;
+        if (o == null) {
+            for (i = start; i < end; ++i) {
+                if (es[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (i = start; i < end; ++i) {
+                if (o.equals(es[i])) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        return this.lastIndexOfRange(o, 0, this.size);
+    }
+
+    int lastIndexOfRange(Object o, int start, int end) {
+
+        Object[] es = this.internal;
+        int i;
+        if (o == null) {
+            for (i = end - 1; i >= start; --i) {
+                if (es[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (i = end - 1; i >= start; --i) {
+                if (o.equals(es[i])) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
     }
 
     @Override
     public ListIterator<E> listIterator() {
-        return null;
+        return this.listIterator(0);
     }
 
     @Override
-    public ListIterator<E> listIterator(int i) {
+    public ListIterator<E> listIterator(final int index) {
+
+        this.rangeCheckForAdd(index);
+        //return new VersionList<>().ListItr(index);
         return null;
     }
 
+    /**
+     * Простая реализация подсписка
+     *
+     * @param fromIndex
+     * @param toIndex
+     * @return
+     */
     @Override
-    public List<E> subList(int i, int i1) {
-        return null;
+    public List<E> subList(int fromIndex, int toIndex) {
+
+        this.rangeCheckForAdd(fromIndex - 1);
+        this.rangeCheckForAdd(toIndex - 1);
+
+        List<E> sublist = new VersionList<>();
+        for (int i = fromIndex; i <= toIndex; i++) {
+
+            sublist.add(this.get(i));
+        }
+
+        return sublist;
     }
 }

@@ -79,5 +79,63 @@ public class VersionListTest {
 
         Assert.assertEquals(list1, resultList);
     }
-    
+
+    @Test
+    public void getIndexListTest() {
+
+        List<String> list = new VersionList<>();
+        list.add("с нуля, с нуля начинается отсчёт");
+        Assert.assertEquals("с нуля, с нуля начинается отсчёт", list.get(0));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getOutIndexListTest() {
+
+        List<String> list = new VersionList<>();
+        list.add("с нуля, с нуля начинается отсчёт");
+        String testString = list.get(1);
+    }
+
+    @Test
+    public void setElementTest() {
+
+        List<String> list = new VersionList<>();
+        list.add("Первый");
+        list.add("Последний");
+        list.add("Левый");
+        list.set(2, "Новый");
+        Assert.assertEquals("Новый", list.get(2));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void setOutOfIndexElementTest() {
+
+        List<String> list = new VersionList<>(10);
+        list.set(2, "Новый");
+    }
+
+    @Test
+    public void indexOfElementTest() {
+
+        List<String> list = new VersionList<>();
+        list.add("Первый");
+        list.add("Последний");
+        list.add("Ленивый");
+        list.add("Ленивый");
+
+        Assert.assertEquals(2, list.indexOf("Ленивый"));
+    }
+
+    @Test
+    public void lastIndexOfElementTest() {
+
+        List<String> list = new VersionList<>();
+        list.add("Первый");
+        list.add("Последний");
+        list.add("Ленивый");
+        list.add("Ленивый");
+
+        Assert.assertEquals(3, list.lastIndexOf("Ленивый"));
+    }
+
 }
