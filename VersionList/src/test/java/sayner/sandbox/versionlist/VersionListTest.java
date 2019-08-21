@@ -138,4 +138,10 @@ public class VersionListTest {
         Assert.assertEquals(3, list.lastIndexOf("Ленивый"));
     }
 
+    @Test
+    public void getInitVersionTest() {
+
+        VersionList<String> list = new VersionList<>();
+        Assert.assertEquals(2, list.getVersionList().size());
+    }
 }

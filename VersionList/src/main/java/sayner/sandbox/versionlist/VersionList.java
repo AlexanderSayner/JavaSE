@@ -1,9 +1,14 @@
 package sayner.sandbox.versionlist;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.*;
 
-public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneable, Serializable {
+/**
+ * итератор не работает
+ * @param <E>
+ */
+public class VersionList<E> extends AbstractList<E> implements VersionalList<E>, List<E>, Cloneable, Serializable {
 
     private static final int DEFAULT_CAPACITY = 10;
     private static final Object[] EMPTY_ELEMENTDATA = new Object[0];
@@ -12,7 +17,7 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
     private int size;
     private static final int MAX_ARRAY_SIZE = 2147483639;
 
-    private List<Modification<E>> modifications = new ArrayList<>();
+    private final List<Modification<E>> modifications;
 
     //
     // Конструкторы
@@ -20,6 +25,7 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
     public VersionList() {
         this.internal = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+        this.modifications = initiateVersionalList();
     }
 
     public VersionList(int initialCapacity) {
@@ -33,6 +39,8 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
 
             this.internal = EMPTY_ELEMENTDATA;
         }
+
+        this.modifications = initiateVersionalList();
     }
 
     public VersionList(Collection<? extends E> collection) {
@@ -45,11 +53,36 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         } else {
             this.internal = EMPTY_ELEMENTDATA;
         }
+
+        // КОСТЫЛЬ !!!
+        this.modifications = initiateVersionalList();
     }
 
     //
     // private methods
     //
+
+    /**
+     * Создают первую, инициализирующую версию
+     *
+     * @return список, с первой версией
+     */
+    private LinkedList<Modification<E>> initiateVersionalList() {
+
+        Version firstVersion = new Version(LocalDateTime.now());
+
+        Modification<E> initialModification = new Modification<>(
+                firstVersion,
+                Action.Initiate,
+                null,
+                -1
+        );
+
+        LinkedList<Modification<E>> modifications = new LinkedList<>();
+        modifications.add(initialModification);
+
+        return modifications;
+    }
 
     private void checkForComodification(int expectedModCount) {
 
@@ -220,9 +253,19 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         array[this.size = newSize] = null; // на место size присвоить null
     }
 
+    // ====================
+    // = Версионнсть списка
+    // ====================
+
+    private void createNewVersion(Action action, E object) {
+
+    }
+
+    // =========================================================
     //
     // public methods
     //
+    // =========================================================
 
     public Object[] toArray() {
         return Arrays.copyOf(this.internal, this.size);
@@ -384,9 +427,6 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         System.arraycopy(elementData, index, elementData, index + 1, s - index);
         elementData[index] = element;
         this.size = s + 1;
-
-        // Фиксация изменений
-        Modification<E> eModification=new Modification<>();
     }
 
     @Override
@@ -484,5 +524,19 @@ public class VersionList<E> extends AbstractList<E> implements List<E>, Cloneabl
         }
 
         return sublist;
+    }
+
+    @Override
+    public List<String> getVersionList() {
+
+        List<String> journal=new ArrayList<>();
+        journal.add("Список всех созданных версий:");
+
+        for (Modification<E> modification:this.modifications){
+            journal.add(String.format("Number: %s.%s; date and time: %s.",
+                    modification.getVersion().getGeneration().getGeneration().toString(),modification.getVersion().getNumber(),modification.getVersion().getLocalDateTime().toString()));
+        }
+
+        return journal;
     }
 }
