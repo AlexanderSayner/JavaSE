@@ -6,6 +6,7 @@ import java.util.*;
 
 /**
  * итератор не работает
+ *
  * @param <E>
  */
 public class VersionList<E> extends AbstractList<E> implements VersionalList<E>, List<E>, Cloneable, Serializable {
@@ -71,10 +72,13 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
         Version firstVersion = new Version(LocalDateTime.now());
 
-        Modification<E> initialModification = new Modification<>(
+        Map<Action, List<E>> actionListMap = new HashMap<>();
+        actionListMap.put(Action.Initiate, null);
+
+        Modification<E> initialModification = new Modification<E>(
                 firstVersion,
-                Action.Initiate,
-                null,
+                actionListMap,
+                -1,
                 -1
         );
 
@@ -257,8 +261,62 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     // = Версионнсть списка
     // ====================
 
-    private void createNewVersion(Action action, E object) {
+    /**
+     * Версия последнего изменения
+     *
+     * @return
+     */
+    private Version getLastVersion() {
 
+        // Преобразования не рискованны, так как все объекты цели жёстко инициализируются во время создания класса
+        return ((Modification<E>) ((LinkedList) this.modifications).getLast()).getVersion();
+    }
+
+    /**
+     * Сохраняет изменение
+     *
+     * @param actionListMap объекты и совершённые действия над ними
+     * @param begin         индекс, начиная с которого все объекты бли изменены
+     * @param end           конец интервала изменений
+     */
+    private void createNextVersion(Map<Action, List<E>> actionListMap, Integer begin, Integer end) {
+
+        Modification<E> modification = new Modification<>(
+                getLastVersion().nextVersion(LocalDateTime.now()),
+                actionListMap,
+                begin,
+                end
+        );
+
+        this.modifications.add(modification);
+    }
+
+    /**
+     * Чтобы удобно было
+     *
+     * @param actionListMap
+     * @param index
+     */
+    private void createNextVersion(Map<Action, List<E>> actionListMap, Integer index) {
+        createNextVersion(actionListMap, index, index);
+    }
+
+    /**
+     * Сохраняет изменения списка
+     *
+     * @param index   Индекс элемента, куда его положили
+     * @param element Сам объект
+     */
+    private void versionalAdd(Integer index, E element) {
+
+        Map<Action, List<E>> actionListMap = new HashMap<>();
+
+        List<E> list = new ArrayList<>();
+        list.add(element);
+
+        actionListMap.put(Action.Created, list);
+
+        createNextVersion(actionListMap, index, index);
     }
 
     // =========================================================
@@ -408,13 +466,18 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
     public boolean add(E element) {
 
+        final Integer currentSize = this.size;
+
         ++this.modCount;
-        this.add(element, this.internal, this.size);
+        this.add(element, this.internal, currentSize);
+
+        versionalAdd(currentSize, element);
+
         return true;
     }
 
     @Override
-    public void add(int index, E element) {
+    public void add(final int index, E element) {
 
         this.rangeCheckForAdd(index);
         ++this.modCount;
@@ -427,6 +490,9 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         System.arraycopy(elementData, index, elementData, index + 1, s - index);
         elementData[index] = element;
         this.size = s + 1;
+
+        // Версионный функционал
+        versionalAdd(index, element);
     }
 
     @Override
@@ -527,14 +593,39 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     }
 
     @Override
+    public String getLastVersionNumber() {
+        return getLastVersion().getNumber().toString();
+    }
+
+    @Override
+    public String getLastFullVersion() {
+        return String.format("%s.%s", getLastVersion().getGeneration().getGeneration().toString(), getLastVersionNumber());
+    }
+
+    @Override
+    public String getLastVersionDate() {
+        return String.format("%s", getLastVersion().getLocalDateTime().toLocalDate());
+    }
+
+    @Override
+    public String getLastVersionTime() {
+        return String.format("%s", getLastVersion().getLocalDateTime().toLocalTime());
+    }
+
+    @Override
+    public String getLastFullVersionWithDate() {
+        return String.format("Полная информация о последней версии: %s", getLastVersion().toString());
+    }
+
+    @Override
     public List<String> getVersionList() {
 
-        List<String> journal=new ArrayList<>();
+        List<String> journal = new ArrayList<>();
         journal.add("Список всех созданных версий:");
 
-        for (Modification<E> modification:this.modifications){
+        for (Modification<E> modification : this.modifications) {
             journal.add(String.format("Number: %s.%s; date and time: %s.",
-                    modification.getVersion().getGeneration().getGeneration().toString(),modification.getVersion().getNumber(),modification.getVersion().getLocalDateTime().toString()));
+                    modification.getVersion().getGeneration().getGeneration().toString(), modification.getVersion().getNumber(), modification.getVersion().getLocalDateTime().toString()));
         }
 
         return journal;

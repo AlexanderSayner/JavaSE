@@ -17,7 +17,7 @@ class Version {
     private final LocalDateTime localDateTime; // Дата
 
     public Version(LocalDateTime localDateTime) {
-        this(new Generation(1), 1, localDateTime);
+        this(new Generation(1), 0, localDateTime);
     }
 
     public Version(Integer number, LocalDateTime localDateTime) {
@@ -34,5 +34,23 @@ class Version {
 
     public Version nextGeneration(LocalDateTime localDateTime) {
         return new Version(this.generation.nextGeneration(), 1, localDateTime);
+    }
+
+    @Override
+    public String toString() {
+        return "Версия: " +
+                "ветка " + generation.getGeneration() +
+                ", номер " + number +
+                ", дата " + localDateTime.toLocalDate() +
+                ", время " + localDateTime.toLocalTime() +
+                '.';
+    }
+
+    public String toJsonString() {
+        return "Version{" +
+                "generation=" + generation.getGeneration() +
+                ", number=" + number +
+                ", localDateTime=" + localDateTime +
+                '}';
     }
 }

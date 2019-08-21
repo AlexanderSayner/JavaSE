@@ -141,7 +141,24 @@ public class VersionListTest {
     @Test
     public void getInitVersionTest() {
 
-        VersionList<String> list = new VersionList<>();
+        VersionalList<String> list = new VersionList<>();
         Assert.assertEquals(2, list.getVersionList().size());
+    }
+
+    @Test
+    public void initialLastVersionStringTest() {
+
+        VersionalList<String> list = new VersionList<>();
+        Assert.assertEquals("1.0", list.getLastFullVersion());
+    }
+
+    @Test
+    public void addingVersionTest() {
+
+        VersionalList<String> list = new VersionList<>();
+        list.add("Let");
+        list.add("it");
+        list.add("happen");
+        Assert.assertEquals("1.3", list.getLastFullVersion());
     }
 }
