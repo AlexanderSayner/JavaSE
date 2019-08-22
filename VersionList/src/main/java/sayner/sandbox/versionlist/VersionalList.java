@@ -40,4 +40,6 @@ public interface VersionalList<E> extends List<E> {
     List<E> getVersionalList(Integer hour, Integer minute, Class<? extends List> listClass);
 
     E getVersionedElement(int index, String version);
+
+    E getVersionedElement(int index, Integer hour, Integer minute);
 }

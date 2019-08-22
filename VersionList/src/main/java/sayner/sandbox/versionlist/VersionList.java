@@ -343,6 +343,20 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         createNextVersion(actionListMap, index, index);
     }
 
+    private void versionalUpdate(Integer index, E element) {
+
+        Map<Action, List<E>> actionListMap = new LinkedHashMap<>();
+
+        // Берём елемент
+        List<E> list = new ArrayList<>();
+        list.add(element);
+
+        // Говорим, что его нужно подправить
+        actionListMap.put(Action.Updated, list);
+
+        createNextVersion(actionListMap, index, index);
+    }
+
     /**
      * По
      *
@@ -453,6 +467,7 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
                 List<E> listOfChangedObjects = (List<E>) entry.getValue();
 
+                int updateOperationOffset = 0;
                 // Пройтись по выбранным объектам
                 for (E element : listOfChangedObjects) {
 
@@ -464,9 +479,25 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
                         case Deleted:
                             mummy.remove(element);
                             break;
+                        case Updated:
+                            // В списке модификаций хранится, как правило, одно изменение,
+                            // поэтому на первой итерации пробежки по списку объектов смещение = 0
+                            // Но что, если обновилось несколько
+                            // Индекс, с какого элемента произошли изменения сохранаяется
+                            // А чтобы каждый следующий попал точно на своё место, к этому сдвигу будет прибавляться индекс смещения
+                            // Это не работает, если записать несколько изменений сразу в нескольких местах,
+                            // но этого и не подразумевает интерфейс List
+                            // Данная функция может потребоваться только в одном случае:
+                            // Пользователь добавил несколько новых элементов одной операцией addAll "внахлёст" - повер существующих
+                            // Однако, addAll не добавляет записи хаотично, он добавляет их подрояд, от и до
+                            // Поэтому логика будет работать как надо
+                            mummy.set(actualModification.getIndexFrom() + updateOperationOffset, element);
+                            break;
                         default:
                             break;
                     }
+
+                    updateOperationOffset++;
                 }
             }
         }
@@ -617,6 +648,10 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         Objects.checkIndex(index, this.size);
         E oldValue = this.internal(index);
         this.internal[index] = element;
+
+        // Версионный функционал
+        versionalUpdate(index, element);
+
         return oldValue;
     }
 
@@ -881,6 +916,12 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     @Override
     public E getVersionedElement(int index, String version) {
 
-        return null;
+        return getVersionalList(version).get(index);
+    }
+
+    @Override
+    public E getVersionedElement(int index, Integer hour, Integer minute) {
+
+        return getVersionalList(hour, minute).get(index);
     }
 }

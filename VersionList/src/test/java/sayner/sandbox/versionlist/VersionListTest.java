@@ -160,9 +160,9 @@ public class VersionListTest {
     public void addingVersionTest() {
 
         VersionalList<String> list = new VersionList<>();
-        list.add("Let");
-        list.add("it");
-        list.add("happen");
+        list.add("Let"); // v1.1
+        list.add("it"); // v1.2
+        list.add("happen"); // v1.3
         Assert.assertEquals("1.3", list.getLastFullVersion());
     }
 
@@ -172,7 +172,7 @@ public class VersionListTest {
         VersionalList<String> versionalList = new VersionList<>();
         versionalList.add("For");
         versionalList.add("whom");
-        versionalList.add("the");
+        versionalList.add("the"); // v1.3
         versionalList.add("bell");
         versionalList.add("tolls");
 
@@ -192,17 +192,18 @@ public class VersionListTest {
     public void recoveryVersionalListExceptionTest() {
 
         VersionalList<String> versionalList = new VersionList<>();
-        versionalList.add("For");
-        versionalList.add("whom");
+        versionalList.add("For"); // element 0, v1.1
+        versionalList.add("whom"); // element 1, v1.2
         versionalList.add("the");
         versionalList.add("bell");
         versionalList.add("tolls");
 
         int version = 2;
 
-        List<String> list = versionalList.getVersionalList(String.format("1.%d", version));
+        List<String> listv2 = versionalList.getVersionalList(String.format("1.%d", version));
+        List<String> listv3 = versionalList.getVersionalList(String.format("1.%d", 3));
 
-        list.get(version);
+        listv2.get(version);
     }
 
     @Test
@@ -409,7 +410,7 @@ public class VersionListTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void getVersionedListByDate() throws InterruptedException {
+    public void getVersionedListByDate() {
 
         String in = "In";
         String pain = "Pain";
@@ -472,5 +473,33 @@ public class VersionListTest {
 
             Assert.assertTrue(element1.equals(element2));
         }
+    }
+
+    @Test
+    public void updateElementTest() {
+
+        String i = "I";
+        String comma = ",";
+        String the = "the";
+        String Mask = "Mask";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(i);
+        sourceList.add(comma);
+        sourceList.add(the);
+        sourceList.add(Mask);
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(i); // v1.1
+        versionalList.add(comma); // v1.2
+        versionalList.add(the); // v1.3
+        versionalList.add(Mask); // v1.4
+        versionalList.set(2, "The"); // v1.5
+
+        int version = 4;
+
+        List<String> list = versionalList.getVersionalList(String.format("1.%d", version), ArrayList.class);
+
+        Assert.assertTrue(list.get(2).equals("the"));
     }
 }

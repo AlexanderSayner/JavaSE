@@ -4,5 +4,6 @@ enum Action {
 
     Initiate,
     Created,
-    Deleted
+    Deleted,
+    Updated
 }
