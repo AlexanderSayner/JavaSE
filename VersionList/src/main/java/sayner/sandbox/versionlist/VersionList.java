@@ -808,7 +808,7 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
         for (Modification<E> modification : this.modifications) {
             journal.add(String.format("Number: %s.%s; date and time: %s.",
-                    modification.getVersion().getGeneration().getGeneration().toString(), modification.getVersion().getNumber(), modification.getVersion().getLocalDateTime().toString()));
+                    modification.getVersion().getGeneration().getGeneration().toString(), modification.getVersion().getNumber(), modification.getVersion().getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-DD HH:mm"))));
         }
 
         return journal;

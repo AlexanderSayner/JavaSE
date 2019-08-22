@@ -423,7 +423,7 @@ public class VersionListTest {
         VersionalList<String> versionalList = new VersionList<>();
         versionalList.add(in); // v1.1
         versionalList.add(pain); // v1.2
-        LocalTime localDateTime=LocalTime.now();
+        LocalTime localDateTime = LocalTime.now();
         versionalList.add(view); // v1.3
 
         List<String> stringList = versionalList.getVersionalList(localDateTime);
@@ -434,6 +434,41 @@ public class VersionListTest {
 
             String element1 = sourceList.get(i);
             String element2 = stringList.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getVersionedListByYourTime() throws InterruptedException {
+
+        String i = "I";
+        String comma = ",";
+        String the = "the";
+        String Mask = "Mask";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(i);
+        sourceList.add(comma);
+        sourceList.add(the);
+        sourceList.add(Mask);
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(i); // v1.1
+        versionalList.add(comma); // v1.2
+        LocalTime localTime = LocalTime.now();
+        Thread.sleep(90000);
+        versionalList.add(the); // v1.3
+        versionalList.add(Mask); // v1.4
+
+        List<String> stringList = versionalList.getVersionalList(localTime.getHour(), localTime.getMinute());
+
+        int version = 3;
+
+        for (int j = 0; j < version; j++) {
+
+            String element1 = sourceList.get(j);
+            String element2 = stringList.get(j);
 
             Assert.assertTrue(element1.equals(element2));
         }
