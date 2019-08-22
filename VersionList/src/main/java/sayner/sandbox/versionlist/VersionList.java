@@ -1,7 +1,10 @@
 package sayner.sandbox.versionlist;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -18,7 +21,8 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     private int size;
     private static final int MAX_ARRAY_SIZE = 2147483639;
 
-    public final List<Modification<E>> modifications;
+    // Версионная примочка
+    private final List<Modification<E>> modifications;
 
     //
     // Конструкторы
@@ -370,6 +374,40 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
         // Ну что ж, не повезло
         throw new IllegalArgumentException("Соре, не нашёл такой версии");
+    }
+
+    /**
+     * История изменеий по заданной дате
+     *
+     * @param localDateTime
+     * @return
+     */
+    private List<Modification<E>> getVersionedModificationsList(LocalDateTime localDateTime) {
+        // Сюда сложим всю историю изменений
+        List<Modification<E>> listOfAllPreviousModifications = new ArrayList<>();
+
+        // Чтобы ходить туда-сюда
+        ListIterator<Modification<E>> iterator = this.modifications.listIterator();
+
+        // Go
+        // Пока не дойдём до нужной версии
+        while (iterator.hasNext()) {
+
+            Modification<E> iteratedModification = iterator.next();
+
+            // Идёт проверка на существование запрошенной версии
+            Version iteratedModificationVersion = iteratedModification.getVersion();
+
+            // Если немного проскачили, то сдаём
+            if (iteratedModificationVersion.getLocalDateTime().isAfter(localDateTime)) {
+                return listOfAllPreviousModifications;
+            }
+
+            listOfAllPreviousModifications.add(iteratedModification);
+        }
+
+        // Выдаём полный (или пустой) список
+        return listOfAllPreviousModifications;
     }
 
     /**
@@ -789,6 +827,56 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         return getRecoveredList(modificationByVersion, listClass);
     }
 
+    @Override
+    public List<E> getVersionalList(LocalDateTime localDateTime) {
+
+        return getVersionalList(localDateTime, ArrayList.class);
+    }
+
+    @Override
+    public List<E> getVersionalList(LocalDateTime localDateTime, Class<? extends List> listClass) {
+
+        List<Modification<E>> modificationByVersion = getVersionedModificationsList(localDateTime);
+        return getRecoveredList(modificationByVersion, listClass);
+    }
+
+    @Override
+    public List<E> getVersionalList(LocalTime localTime) {
+
+        // Логика логичная представлена ниже:
+        LocalDateTime localDateTime = localTime.atDate(LocalDateTime.now().toLocalDate());
+        return getVersionalList(localDateTime);
+    }
+
+    @Override
+    public List<E> getVersionalList(LocalTime localTime, Class<? extends List> listClass) {
+        LocalDateTime localDateTime = localTime.atDate(LocalDateTime.now().toLocalDate());
+        return getVersionalList(localDateTime, listClass);
+    }
+
+    @Override
+    public List<E> getVersionalList(LocalDate localDate) {
+        LocalDateTime localDateTime = localDate.atTime(23, 59, 59, 999999);
+        return getVersionalList(localDateTime);
+    }
+
+    @Override
+    public List<E> getVersionalList(LocalDate localDate, Class<? extends List> listClass) {
+        LocalDateTime localDateTime = localDate.atTime(23, 59, 59, 999999);
+        return getVersionalList(localDateTime, listClass);
+    }
+
+    @Override
+    public List<E> getVersionalList(Integer hour, Integer minute) {
+        LocalTime localTime = LocalTime.of(hour, minute, 59, 999999);
+        return getVersionalList(localTime);
+    }
+
+    @Override
+    public List<E> getVersionalList(Integer hour, Integer minute, Class<? extends List> listClass) {
+        LocalTime localTime = LocalTime.of(hour, minute, 59, 999999);
+        return getVersionalList(localTime, listClass);
+    }
 
     @Override
     public E getVersionedElement(int index, String version) {

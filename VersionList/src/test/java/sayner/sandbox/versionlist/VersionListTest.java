@@ -3,6 +3,8 @@ package sayner.sandbox.versionlist;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -252,10 +254,10 @@ public class VersionListTest {
 
         VersionalList<String> versionalList = new VersionList<>();
 
-        String _the="The";
-        String _void="Void";
+        String _the = "The";
+        String _void = "Void";
 
-        List<String> sourceList=new ArrayList<>();
+        List<String> sourceList = new ArrayList<>();
         sourceList.add(_the);
         sourceList.add(_void);
 
@@ -268,6 +270,7 @@ public class VersionListTest {
         List<String> list = versionalList.getVersionalList(String.format("1.%d", version), LinkedList.class);
 
         for (int i = 0; i < version; i++) {
+
             String element1 = sourceList.get(i);
             String element2 = list.get(i);
 
@@ -280,10 +283,10 @@ public class VersionListTest {
 
         VersionalList<String> versionalList = new VersionList<>();
 
-        String _the="The";
-        String _void="Void";
+        String _the = "The";
+        String _void = "Void";
 
-        List<String> sourceList=new ArrayList<>();
+        List<String> sourceList = new ArrayList<>();
         sourceList.add(_the);
         sourceList.add(_void);
 
@@ -296,8 +299,141 @@ public class VersionListTest {
         List<String> list = versionalList.getVersionalList(String.format("1.%d", version), LinkedList.class);
 
         for (int i = 0; i < version; i++) {
+
             String element1 = sourceList.get(i);
             String element2 = list.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test
+    public void getAllBeforeCurrentTimeListByDate() {
+
+        String paralyzed = "Paralyzed";
+        String inFlames = "In Flames";
+        String siren = "Siren";
+        String charms = "Charms";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(paralyzed);
+        sourceList.add(inFlames);
+        sourceList.add(siren);
+        sourceList.add(charms);
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(paralyzed); // 1.1
+        versionalList.add(inFlames); // 1.2
+        versionalList.add(siren); // 1.3
+        versionalList.add(charms); // 1.4
+
+        List<String> stringList = versionalList.getVersionalList(LocalDateTime.now());
+
+        int version = 4;
+
+        for (int i = 0; i < version; i++) {
+
+            String element1 = sourceList.get(i);
+            String element2 = stringList.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test
+    public void getAllBeforeRandomTimeListByDate() {
+
+        String paralyzed = "Paralyzed";
+        String inFlames = "In Flames";
+        String siren = "Siren";
+        String charms = "Charms";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(paralyzed);
+        sourceList.add(inFlames);
+        sourceList.add(siren);
+        sourceList.add(charms);
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(paralyzed); // 1.1
+        versionalList.add(inFlames); // 1.2
+        LocalDateTime localDateTime = LocalDateTime.now();
+        versionalList.add(siren); // 1.3
+        versionalList.add(charms); // 1.4
+
+        List<String> stringList = versionalList.getVersionalList(localDateTime);
+
+        int version = 2;
+
+        for (int i = 0; i < version; i++) {
+
+            String element1 = sourceList.get(i);
+            String element2 = stringList.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getAllBeforeRandomTimeListByDateOnException() {
+
+        String paralyzed = "Paralyzed";
+        String inFlames = "In Flames";
+        String siren = "Siren";
+        String charms = "Charms";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(paralyzed);
+        sourceList.add(inFlames);
+        sourceList.add(siren);
+        sourceList.add(charms);
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(paralyzed); // 1.1
+        versionalList.add(inFlames); // 1.2
+        LocalDateTime localDateTime = LocalDateTime.now();
+        versionalList.add(siren); // 1.3
+        versionalList.add(charms); // 1.4
+
+        List<String> stringList = versionalList.getVersionalList(localDateTime);
+
+        int version = 3;
+
+        for (int i = 0; i < version; i++) {
+
+            String element1 = sourceList.get(i);
+            String element2 = stringList.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getVersionedListByDate() throws InterruptedException {
+
+        String in = "In";
+        String pain = "Pain";
+        String view = "View";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(in);
+        sourceList.add(pain);
+        sourceList.add(view);
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(in); // v1.1
+        versionalList.add(pain); // v1.2
+        LocalTime localDateTime=LocalTime.now();
+        versionalList.add(view); // v1.3
+
+        List<String> stringList = versionalList.getVersionalList(localDateTime);
+
+        int version = 3;
+
+        for (int i = 0; i < version; i++) {
+
+            String element1 = sourceList.get(i);
+            String element2 = stringList.get(i);
 
             Assert.assertTrue(element1.equals(element2));
         }
