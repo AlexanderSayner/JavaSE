@@ -3,6 +3,8 @@ package sayner.sandbox.versionlist;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class VersionListTest {
@@ -199,5 +201,105 @@ public class VersionListTest {
         List<String> list = versionalList.getVersionalList(String.format("1.%d", version));
 
         list.get(version);
+    }
+
+    @Test
+    public void recoveryVersionalLinkedListTest() {
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add("For");
+        versionalList.add("whom");
+        versionalList.add("the");
+        versionalList.add("bell");
+        versionalList.add("tolls");
+
+        int version = 3;
+
+        List<String> list = versionalList.getVersionalList(String.format("1.%d", version), LinkedList.class);
+
+        for (int i = 0; i < version; i++) {
+            String element1 = versionalList.get(i);
+            String element2 = list.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test
+    public void versionalRemoveTest() {
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add("The");
+        versionalList.add("Void");
+        versionalList.remove(0);
+
+        Assert.assertEquals(1, versionalList.size());
+    }
+
+    @Test
+    public void versionalObjectRemoveTest() {
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add("The");
+        versionalList.add("Void");
+        versionalList.remove("The");
+
+        Assert.assertEquals(1, versionalList.size());
+    }
+
+    @Test
+    public void versionalRemoveRecoveryTest() {
+
+        VersionalList<String> versionalList = new VersionList<>();
+
+        String _the="The";
+        String _void="Void";
+
+        List<String> sourceList=new ArrayList<>();
+        sourceList.add(_the);
+        sourceList.add(_void);
+
+        versionalList.add(_the); // v1.1
+        versionalList.add(_void); // v1.2
+        versionalList.remove(0);
+
+        int version = 2;
+
+        List<String> list = versionalList.getVersionalList(String.format("1.%d", version), LinkedList.class);
+
+        for (int i = 0; i < version; i++) {
+            String element1 = sourceList.get(i);
+            String element2 = list.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test
+    public void versionalObjectRemoveRecoveryTest() {
+
+        VersionalList<String> versionalList = new VersionList<>();
+
+        String _the="The";
+        String _void="Void";
+
+        List<String> sourceList=new ArrayList<>();
+        sourceList.add(_the);
+        sourceList.add(_void);
+
+        versionalList.add(_the); // v1.1
+        versionalList.add(_void); // v1.2
+        versionalList.remove("The");
+
+        int version = 2;
+
+        List<String> list = versionalList.getVersionalList(String.format("1.%d", version), LinkedList.class);
+
+        for (int i = 0; i < version; i++) {
+            String element1 = sourceList.get(i);
+            String element2 = list.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
     }
 }

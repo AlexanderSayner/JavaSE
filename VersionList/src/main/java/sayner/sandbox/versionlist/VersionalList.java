@@ -18,5 +18,7 @@ public interface VersionalList<E> extends List<E> {
 
     List<E> getVersionalList(String version);
 
+    List<E> getVersionalList(String version, Class<? extends List> listClass);
+
     E getVersionedElement(int index, String version);
 }

@@ -322,6 +322,24 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     }
 
     /**
+     * Сохраняет изменения об объекте, что необходимо удалить
+     *
+     * @param index   позиция в массиве
+     * @param element данные
+     */
+    private void versionalRemove(Integer index, E element) {
+
+        Map<Action, List<E>> actionListMap = new LinkedHashMap<>();
+
+        List<E> list = new ArrayList<>();
+        list.add(element);
+
+        actionListMap.put(Action.Deleted, list);
+
+        createNextVersion(actionListMap, index, index);
+    }
+
+    /**
      * По
      *
      * @param stringedFullVersion полному имени версии в формате String получает
@@ -393,7 +411,7 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
                 Action whatToDo = (Action) entry.getKey();
 
-                if(whatToDo==Action.Initiate) continue;
+                if (whatToDo == Action.Initiate) continue;
 
                 List<E> listOfChangedObjects = (List<E>) entry.getValue();
 
@@ -603,7 +621,33 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         Object[] es = this.internal; // скопировать
         E oldValue = (E) es[index]; // раздобыть старое значение
         this.fastRemove(es, index); // стереть
+
+        // Версионный функционал
+        versionalRemove(index, get(index));
+
         return oldValue; // профит
+    }
+
+    /**
+     * Находит индекс и удаляет
+     *
+     * @param element объект
+     * @return true if didn't throw
+     */
+    @Override
+    public boolean remove(Object element) {
+
+        Integer index = indexOf(element);
+
+        Objects.checkIndex(index, this.size); // проверить
+        Object[] es = this.internal; // скопировать
+        E oldValue = (E) es[index]; // раздобыть старое значение
+        this.fastRemove(es, index); // стереть
+
+        // Версионный функционал
+        versionalRemove(index, get(index));
+
+        return true;
     }
 
     @Override
@@ -637,7 +681,7 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         return this.lastIndexOfRange(o, 0, this.size);
     }
 
-    int lastIndexOfRange(Object o, int start, int end) {
+    private int lastIndexOfRange(Object o, int start, int end) {
 
         Object[] es = this.internal;
         int i;
@@ -735,9 +779,16 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     @Override
     public List<E> getVersionalList(String version) {
 
-        List<Modification<E>> modificationByVersion = getVersionedModificationsList(version);
-        return getRecoveredList(modificationByVersion, ArrayList.class);
+        return getVersionalList(version, ArrayList.class);
     }
+
+    @Override
+    public List<E> getVersionalList(String version, Class<? extends List> listClass) {
+
+        List<Modification<E>> modificationByVersion = getVersionedModificationsList(version);
+        return getRecoveredList(modificationByVersion, listClass);
+    }
+
 
     @Override
     public E getVersionedElement(int index, String version) {
