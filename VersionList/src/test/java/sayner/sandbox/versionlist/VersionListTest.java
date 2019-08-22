@@ -142,7 +142,7 @@ public class VersionListTest {
     public void getInitVersionTest() {
 
         VersionalList<String> list = new VersionList<>();
-        Assert.assertEquals(2, list.getVersionList().size());
+        Assert.assertEquals(2, list.getVersionsList().size());
     }
 
     @Test
@@ -160,5 +160,44 @@ public class VersionListTest {
         list.add("it");
         list.add("happen");
         Assert.assertEquals("1.3", list.getLastFullVersion());
+    }
+
+    @Test
+    public void recoveryVersionalListTest() {
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add("For");
+        versionalList.add("whom");
+        versionalList.add("the");
+        versionalList.add("bell");
+        versionalList.add("tolls");
+
+        int version = 3;
+
+        List<String> list = versionalList.getVersionalList(String.format("1.%d", version));
+
+        for (int i = 0; i < version; i++) {
+            String element1 = versionalList.get(i);
+            String element2 = list.get(i);
+
+            Assert.assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void recoveryVersionalListExceptionTest() {
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add("For");
+        versionalList.add("whom");
+        versionalList.add("the");
+        versionalList.add("bell");
+        versionalList.add("tolls");
+
+        int version = 2;
+
+        List<String> list = versionalList.getVersionalList(String.format("1.%d", version));
+
+        list.get(version);
     }
 }

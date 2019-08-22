@@ -11,7 +11,7 @@ import java.util.Map;
  * действие - список объектов, над которыми произвели это действие
  */
 @Data
-class Modification<O> {
+public class Modification<O> {
 
     private final Version version;
     private final Map<Action, List<O>> actionObjectsMap;

@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="sayner.sandbox.versionlist.VersionListTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2019-08-21T13:11:49" hostname="uarchon-X550VB" time="0.114">
+<testsuite name="sayner.sandbox.versionlist.VersionListTest" tests="18" skipped="0" failures="0" errors="0" timestamp="2019-08-22T08:38:37" hostname="uarchon-X550VB" time="0.102">
   <properties/>
-  <testcase name="equalsItselfTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.054"/>
-  <testcase name="addingVersionTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
-  <testcase name="getOutIndexListTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
-  <testcase name="setOutOfIndexElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.003"/>
-  <testcase name="setElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.003"/>
-  <testcase name="negativeInitialCapacityTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.016"/>
+  <testcase name="equalsItselfTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.045"/>
+  <testcase name="addingVersionTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
+  <testcase name="getOutIndexListTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.002"/>
+  <testcase name="setOutOfIndexElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
+  <testcase name="setElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
+  <testcase name="negativeInitialCapacityTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.023"/>
   <testcase name="getInitVersionTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
   <testcase name="addNewElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
   <testcase name="emptyListInitSizeTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
   <testcase name="indexOfElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
   <testcase name="addIndexAllElementsTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
-  <testcase name="initialLastVersionStringTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
+  <testcase name="initialLastVersionStringTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
   <testcase name="sizeCapacityTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
-  <testcase name="lastIndexOfElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
-  <testcase name="cloneEmptyListInitTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
-  <testcase name="getIndexListTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.003"/>
+  <testcase name="lastIndexOfElementTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.002"/>
+  <testcase name="recoveryVersionalListTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.003"/>
+  <testcase name="cloneEmptyListInitTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
+  <testcase name="getIndexListTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.0"/>
+  <testcase name="recoveryVersionalListExceptionTest" classname="sayner.sandbox.versionlist.VersionListTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

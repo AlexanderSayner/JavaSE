@@ -18,7 +18,7 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     private int size;
     private static final int MAX_ARRAY_SIZE = 2147483639;
 
-    private final List<Modification<E>> modifications;
+    public final List<Modification<E>> modifications;
 
     //
     // Конструкторы
@@ -72,7 +72,8 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
         Version firstVersion = new Version(LocalDateTime.now());
 
-        Map<Action, List<E>> actionListMap = new HashMap<>();
+        // Порядок важен воизбежании неведомой магии и волшебства, даже если на это потребуется больше памяти
+        Map<Action, List<E>> actionListMap = new LinkedHashMap<>();
         actionListMap.put(Action.Initiate, null);
 
         Modification<E> initialModification = new Modification<E>(
@@ -309,7 +310,8 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
      */
     private void versionalAdd(Integer index, E element) {
 
-        Map<Action, List<E>> actionListMap = new HashMap<>();
+        // Порядок важен воизбежании неведомой магии и волшебства, даже если на это потребуется больше памяти
+        Map<Action, List<E>> actionListMap = new LinkedHashMap<>();
 
         List<E> list = new ArrayList<>();
         list.add(element);
@@ -317,6 +319,104 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         actionListMap.put(Action.Created, list);
 
         createNextVersion(actionListMap, index, index);
+    }
+
+    /**
+     * По
+     *
+     * @param stringedFullVersion полному имени версии в формате String получает
+     * @return изменение в данной версее
+     */
+    private List<Modification<E>> getVersionedModificationsList(String stringedFullVersion) {
+
+        // Сюда сложим всю историю изменений
+        List<Modification<E>> listOfAllPreviousModifications = new ArrayList<>();
+
+        // Чтобы ходить туда-сюда
+        ListIterator<Modification<E>> iterator = this.modifications.listIterator();
+
+        // Go
+        // Пока не дойдём до нужной версии
+        while (iterator.hasNext()) {
+
+            Modification<E> iteratedModification = iterator.next();
+
+            listOfAllPreviousModifications.add(iteratedModification);
+
+            // Идёт проверка на существование запрошенной версии
+            Version iteratedModificationVersion = iteratedModification.getVersion();
+            if (stringedFullVersion.equals(String.format("%s.%s", iteratedModificationVersion.getGeneration().getGeneration(), iteratedModificationVersion.getNumber()))) {
+                return listOfAllPreviousModifications;
+            }
+        }
+
+        // Ну что ж, не повезло
+        throw new IllegalArgumentException("Соре, не нашёл такой версии");
+    }
+
+    /**
+     * Великое восстановление из архивов
+     *
+     * @param listOfModifications СТРОГАЯ(ОТСОРТИРОВАННАЯ) ПОСЛЕДОВАТЕЛЬНОСТЬ ИЗМЕНЕНИЙ
+     * @param listClass           чё вернуть-то ваще?
+     * @return на
+     */
+    private List<E> getRecoveredList(List<Modification<E>> listOfModifications, Class<? extends List> listClass) {
+
+        List<E> mummy;
+
+        // Пусть получит то, что хочет
+        if (listClass == ArrayList.class) {
+            mummy = new ArrayList<>();
+        } else if (listClass == LinkedList.class) {
+            mummy = new LinkedList<>();
+        } else {
+            throw new IllegalArgumentException(String.format("С этой вот штукой %s я не работаю. Поддерживается %s или %s", listClass.getClass().toString(), ArrayList.class.toString(), LinkedList.class.toString()));
+        }
+
+        // Теперь, когда инициализировано всё то, что нужно
+        // Чтобы ходить как неприкаянный
+        ListIterator iterator = listOfModifications.listIterator();
+
+        while (iterator.hasNext()) {
+
+            Modification<E> actualModification = (Modification<E>) iterator.next();
+
+            // Готовимся к глобальным переменам, порядок важен воизбежании неведомой магии и волшебства, даже если на это потребуется больше памяти
+            Map<Action, List<E>> actionListMap = new LinkedHashMap<>();
+
+            // Тепер у нас есть карта изменений
+            actionListMap = actualModification.getActionObjectsMap();
+
+            // Для каждого изменения в карте
+            for (Map.Entry entry : actionListMap.entrySet()) {
+
+                Action whatToDo = (Action) entry.getKey();
+
+                if(whatToDo==Action.Initiate) continue;
+
+                List<E> listOfChangedObjects = (List<E>) entry.getValue();
+
+                // Пройтись по выбранным объектам
+                for (E element : listOfChangedObjects) {
+
+                    // И сделать то, что надо сделать (потом переделаю на метод)
+                    switch (whatToDo) {
+                        case Created:
+                            mummy.add(element);
+                            break;
+                        case Deleted:
+                            mummy.remove(element);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        // Если всё ок, то получим заполненный список
+        return mummy;
     }
 
     // =========================================================
@@ -471,6 +571,7 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         ++this.modCount;
         this.add(element, this.internal, currentSize);
 
+        // Версионный функционал
         versionalAdd(currentSize, element);
 
         return true;
@@ -618,7 +719,7 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     }
 
     @Override
-    public List<String> getVersionList() {
+    public List<String> getVersionsList() {
 
         List<String> journal = new ArrayList<>();
         journal.add("Список всех созданных версий:");
@@ -632,7 +733,15 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     }
 
     @Override
+    public List<E> getVersionalList(String version) {
+
+        List<Modification<E>> modificationByVersion = getVersionedModificationsList(version);
+        return getRecoveredList(modificationByVersion, ArrayList.class);
+    }
+
+    @Override
     public E getVersionedElement(int index, String version) {
 
+        return null;
     }
 }
