@@ -1,7 +1,5 @@
 # Игнорирование всех файлов и папок в ЛЮБЫХ директориях с указанным именем
-build/*
-Executable/build/*
-Loader/build/*
+build
 target/*
 .gradle/*
 .idea/*
@@ -31,6 +29,7 @@ gradlew
 *.tar.gz
 *.rar
 *.bat
+*.bin
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
