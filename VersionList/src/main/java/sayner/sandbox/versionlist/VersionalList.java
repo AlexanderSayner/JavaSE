@@ -15,4 +15,6 @@ public interface VersionalList<E> extends List<E> {
     String getLastFullVersionWithDate();
 
     List<String> getVersionList();
+
+    E getVersionedElement(int index, String version);
 }

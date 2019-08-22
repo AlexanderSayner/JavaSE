@@ -630,4 +630,9 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
 
         return journal;
     }
+
+    @Override
+    public E getVersionedElement(int index, String version) {
+
+    }
 }
