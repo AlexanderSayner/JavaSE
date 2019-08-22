@@ -1,14 +1,14 @@
 # Игнорирование всех файлов и папок в ЛЮБЫХ директориях с указанным именем
-build/*
-Executable/build/*
-Loader/build/*
-target/*
-.gradle/*
-.idea/*
-gradle/*
-logs/*
-out/*
+build
 gradlew
+target
+.idea
+*gradle
+logs
+out
+# Если ставить символ /, например так:
+# build/*
+# То правило будет распростаняться только на папку в корневой директории
 
 # Compiled class file
 *.class
@@ -31,6 +31,7 @@ gradlew
 *.tar.gz
 *.rar
 *.bat
+*.bin
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
