@@ -1,12 +1,14 @@
 # Игнорирование всех файлов и папок в ЛЮБЫХ директориях с указанным именем
 build
-target/*
-.gradle/*
-.idea/*
-gradle/*
-logs/*
-out/*
 gradlew
+target
+.idea
+*gradle
+logs
+out
+# Если ставить символ /, например так:
+# build/*
+# То правило будет распростаняться только на папку в корневой директории
 
 # Compiled class file
 *.class
