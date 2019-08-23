@@ -35,7 +35,7 @@ public final class LoadMasterImpl implements LoadMaster {
                 if (section instanceof HermeticSection) {
                     // На борт
                     if (section.submerge(cargo) != null) {
-                        return String.format("Загружено в %s", section.getClass().toString());
+                        return String.format("Загружено в %s", section.toString());
                     } else {
 
                         // Операция по освобождению отсека
@@ -75,7 +75,7 @@ public final class LoadMasterImpl implements LoadMaster {
                 if (section instanceof StableTemperatureSection) {
                     // На борт
                     if (section.submerge(cargo) != null) {
-                        return String.format("Загружено в %s", section.getClass().toString());
+                        return String.format("Загружено в %s", section.toString());
                     } else {
 
                         // Операция по освобождению отсека
@@ -116,7 +116,7 @@ public final class LoadMasterImpl implements LoadMaster {
             if (section instanceof CasualSection) {
                 // На борт
                 if (section.submerge(cargo) != null) {
-                    return String.format("Загружено в %s", section.getClass().toString());
+                    return String.format("Загружено в %s", section.toString());
                 } else {
                     return String.format("Нашёлся подходящий отсек, но в нём нет места");
                 }
@@ -131,7 +131,7 @@ public final class LoadMasterImpl implements LoadMaster {
 
             // На борт в первый попавшийся
             if (section.submerge(cargo) != null) {
-                return String.format("Загружено в %s", section.getClass().toString());
+                return String.format("Загружено в %s", section.toString());
             }
         }
 

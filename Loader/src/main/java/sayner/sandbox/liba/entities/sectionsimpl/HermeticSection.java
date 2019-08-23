@@ -32,4 +32,9 @@ public class HermeticSection extends AbstractSection {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "HermeticSection";
+    }
 }

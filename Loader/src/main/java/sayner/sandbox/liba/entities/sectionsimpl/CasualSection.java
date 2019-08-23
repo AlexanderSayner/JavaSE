@@ -33,4 +33,9 @@ public class CasualSection extends AbstractSection {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "CasualSection";
+    }
 }

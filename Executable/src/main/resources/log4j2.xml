@@ -2,12 +2,15 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss} %highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}%logger{36} - %msg%n"/>
+        </Console>
+        <Console name="ColoredConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss} %highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}%message%n"/>
         </Console>
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ColoredConsole"/>
         </Root>
     </Loggers>
 </Configuration>

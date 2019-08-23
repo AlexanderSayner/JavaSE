@@ -33,4 +33,9 @@ public class StableTemperatureSection extends AbstractSection {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "StableTemperatureSection";
+    }
 }

@@ -458,7 +458,7 @@ public class VersionListTest {
         versionalList.add(i); // v1.1
         versionalList.add(comma); // v1.2
         LocalTime localTime = LocalTime.now();
-        Thread.sleep(90000);
+        Thread.sleep(60000);
         versionalList.add(the); // v1.3
         versionalList.add(Mask); // v1.4
 
