@@ -7,14 +7,14 @@ import sayner.sandbox.liba.observer.Observer;
 /**
  * Интерфейс, с помощью которого наблюдатель получает оповещение
  */
-public interface PlaneDestinationObserver extends Observer<Plane, Airport> {
+public interface PlaneDestinationObserver extends Observer<Airport, Plane> {
 
     @Override
-    Airport add(Plane plane, Airport destination);
+    Plane add(Airport plane, Plane destination);
 
     @Override
-    Airport update(Plane plane, Airport destination);
+    Plane update(Airport plane, Plane destination);
 
     @Override
-    Airport remove(Plane plane);
+    Plane remove(Airport plane);
 }

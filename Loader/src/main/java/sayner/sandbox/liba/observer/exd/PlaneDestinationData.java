@@ -34,7 +34,7 @@ public class PlaneDestinationData implements Observable<PlaneDestinationObserver
     public void addNewPlaneInTheAirport(Plane plane, Airport airport) {
 
         this.observers.forEach(planeDestinationObserver -> {
-            planeDestinationObserver.add(plane, airport);
+            planeDestinationObserver.add(airport,plane);
             planeDestinationObserver.logEvent(String.format("Самолёт %s, отправляющийся в %s добавлен", plane, airport.getName()));
         });
     }

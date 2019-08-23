@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,7 +24,7 @@ public final class Plane {
     private Float tonnage;
 
     // Было бы круто, чтобы прям самолёт открывал доступ к определённым секциям
-    private Set<Section> sections;
+    private List<Section> sections;
 
     /**
      * Рассчитать вместительность самолёта

@@ -6,13 +6,15 @@ import sayner.sandbox.liba.entities.Cargo;
 import sayner.sandbox.liba.entities.Section;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 public abstract class AbstractSection implements Section {
 
     // Груз на борту
-    private Set<Cargo> payload;
+    private List<Cargo> payload;
 
     // Объём секции
     @Setter
@@ -51,7 +53,7 @@ public abstract class AbstractSection implements Section {
      */
     protected AbstractSection(Float volume) {
 
-        this.payload = new HashSet<>();
+        this.payload = new LinkedList<>();
         this.volume = volume;
     }
 }

@@ -1,5 +1,6 @@
 package sayner.sandbox.liba.mediator;
 
+import sayner.sandbox.liba.entities.Report;
 import sayner.sandbox.liba.entities.Waybill;
 
 /**
@@ -8,11 +9,8 @@ import sayner.sandbox.liba.entities.Waybill;
 public interface LoadMaster {
 
     // Отдать упаковщику новый заказ
-    Boolean addWaybill(Waybill waybill);
+    Boolean addWaybill(Waybill waybill) throws IllegalArgumentException;
 
-    // Отправить
-    Boolean dispatchOrder(Waybill waybill);
-
-    // Упаковщик знает сколько места остаётся в самолёте после упаковки
-    String wrap(Waybill waybill);
+    // Упаковать и отправить
+    Report wrap(Waybill waybill) throws IllegalArgumentException;
 }

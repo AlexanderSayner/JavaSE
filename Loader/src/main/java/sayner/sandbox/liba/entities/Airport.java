@@ -6,6 +6,7 @@ import sayner.sandbox.liba.observer.exd.PlaneDestinationObserver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Все аэропорты будут обсерверами
@@ -17,34 +18,52 @@ public class Airport implements PlaneDestinationObserver {
     // Индентификатор аэропорта
     private String name;
 
-    // Самолёт - пункт назначения. Самолёты, которые просто стоят и никуда не отправляются бессмысленны
-    private Map<Plane, Airport> planeAirportMap;
+    // Самолёт и пункт назначения. Самолёты, которые просто стоят и никуда не отправляются бессмысленны
+    private Map<Airport,Plane> airportPlaneMap;
 
     public Airport(String name) {
         this.name = name;
-        this.planeAirportMap = new HashMap<>();
+        this.airportPlaneMap = new HashMap<>();
     }
 
     // Отдать самолёт в распоряжение аэропорта
     @Override
-    public Airport add(Plane plane, Airport destination) {
-        return this.planeAirportMap.put(plane, destination);
+    public Plane add(Airport destination,Plane plane) {
+        return this.airportPlaneMap.put(destination,plane);
     }
 
     // Пусть будет пока
     @Override
-    public Airport update(Plane plane, Airport destination) {
+    public Plane update(Airport destination,Plane plane) {
         return null;
     }
 
     // Забрать самолёт
     @Override
-    public Airport remove(Plane plane) {
-        return this.planeAirportMap.remove(plane);
+    public Plane remove(Airport airport) {
+        return this.airportPlaneMap.remove(airport);
     }
 
     @Override
     public void logEvent(String message) {
         log.info(String.format("В диспетчерскую %s поступило сообщение %s", this.name, message));
+    }
+
+    @Override
+    public boolean equals(Object object) {
+
+        if (this == object) return true;
+
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Airport airport = (Airport) object;
+
+        return Objects.equals(name, airport.name); // Именно по имени различают аэропорты
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(name);
     }
 }
