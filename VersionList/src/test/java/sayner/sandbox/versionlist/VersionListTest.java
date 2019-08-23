@@ -502,4 +502,23 @@ public class VersionListTest {
 
         Assert.assertTrue(list.get(2).equals("the"));
     }
+
+    @Test
+    public void iteratorTest(){
+
+        String prey="Prey";
+        String the="The";
+        String neighbourhood="Neighbourhood";
+        String wiped="Wiped";
+        String out="Out";
+        String exclamationMark="!";
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(prey);
+        versionalList.add(the);
+        versionalList.add(neighbourhood);
+        versionalList.add(wiped);
+        versionalList.add(out);
+        versionalList.add(exclamationMark);
+    }
 }
