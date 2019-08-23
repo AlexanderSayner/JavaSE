@@ -3,8 +3,6 @@ package sayner.sandbox.liba.entities.sectionsimpl;
 import lombok.extern.log4j.Log4j2;
 import sayner.sandbox.liba.entities.Cargo;
 
-import java.util.Comparator;
-
 /**
  * Особый герметичный отсек для живого груза
  */
@@ -37,14 +35,16 @@ public class HermeticSection extends AbstractSection {
     }
 
     @Override
-    public Cargo unloadOne(Cargo cargo) throws NullPointerException {
+    public Boolean unloadOne(Cargo cargo) throws NullPointerException {
 
-        if (!super.getPayload().remove(cargo))
+        Boolean status = super.getPayload().remove(cargo);
+
+        if (!status)
             throw new IllegalArgumentException("Не удалилось из герметичной секции: " + cargo.toString());
 
         log.info(String.format("Удалили %s из герметичной секции", cargo.getName()));
 
-        return cargo;
+        return status;
     }
 
     @Override

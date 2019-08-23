@@ -38,23 +38,25 @@ public class CasualSection extends AbstractSection {
     }
 
     @Override
-    public Cargo unloadOne(Cargo cargo) throws NullPointerException {
+    public Boolean unloadOne(Cargo cargo) throws NullPointerException {
 
         return unloadTheBiggestOne();
     }
 
-    public Cargo unloadTheBiggestOne() {
+    public Boolean unloadTheBiggestOne() {
 
         super.getPayload().sort(Comparator.comparing(Cargo::getVolume, Comparator.reverseOrder()));
 
         Cargo removed = super.getPayload().get(0);
 
-        if (!super.getPayload().remove(removed))
+        Boolean status = super.getPayload().remove(removed);
+
+        if (!status)
             throw new IllegalArgumentException("Не удалилось из казуальной секции: " + removed.toString());
 
         log.info(String.format("Удалили %s из казуальной секции", removed.getName()));
 
-        return removed;
+        return status;
     }
 
     @Override

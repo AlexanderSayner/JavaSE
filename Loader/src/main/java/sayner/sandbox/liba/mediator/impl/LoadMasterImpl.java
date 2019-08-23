@@ -173,7 +173,7 @@ public final class LoadMasterImpl implements LoadMaster {
 
             if (cargo.getCargoState() == CargoState.Casual || cargo.getCargoState() == CargoState.Dangerous) {
 
-                if (section.getPayload().remove(cargo)) {
+                if (section.unloadOne(cargo)) {
 
                     removed.add(cargo);
 

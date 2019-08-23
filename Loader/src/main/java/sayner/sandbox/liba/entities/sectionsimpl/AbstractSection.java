@@ -5,10 +5,8 @@ import lombok.Setter;
 import sayner.sandbox.liba.entities.Cargo;
 import sayner.sandbox.liba.entities.Section;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 public abstract class AbstractSection implements Section {
