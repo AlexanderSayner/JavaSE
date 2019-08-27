@@ -1,11 +1,14 @@
 package sayner.sandbox.versionlist;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +18,7 @@ public class VersionListTest {
     public void emptyListInitSizeTest() throws NullPointerException {
 
         List<Object> list = new VersionList<>();
-        Assert.assertEquals(0, list.size());
+        assertEquals(0, list.size());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -29,21 +32,21 @@ public class VersionListTest {
 
         List list = new VersionList();
         List listCopy = new VersionList(list);
-        Assert.assertTrue(list.equals(listCopy));
+        assertTrue(list.equals(listCopy));
     }
 
     @Test
     public void equalsItselfTest() throws NullPointerException {
 
         List<Object> list = new VersionList<>();
-        Assert.assertEquals(list, list);
+        assertEquals(list, list);
     }
 
     @Test
     public void sizeCapacityTest() throws NullPointerException {
 
         List list = new VersionList(10);
-        Assert.assertEquals(0, list.size());
+        assertEquals(0, list.size());
     }
 
     @Test
@@ -51,7 +54,7 @@ public class VersionListTest {
 
         List<String> list = new VersionList<>();
         list.add("Прив");
-        Assert.assertEquals(1, list.size());
+        assertEquals(1, list.size());
     }
 
     @Test
@@ -81,7 +84,7 @@ public class VersionListTest {
         resultList.add("C");
         resultList.add("D");
 
-        Assert.assertEquals(list1, resultList);
+        assertEquals(list1, resultList);
     }
 
     @Test
@@ -89,7 +92,7 @@ public class VersionListTest {
 
         List<String> list = new VersionList<>();
         list.add("с нуля, с нуля начинается отсчёт");
-        Assert.assertEquals("с нуля, с нуля начинается отсчёт", list.get(0));
+        assertEquals("с нуля, с нуля начинается отсчёт", list.get(0));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -108,7 +111,7 @@ public class VersionListTest {
         list.add("Последний");
         list.add("Левый");
         list.set(2, "Новый");
-        Assert.assertEquals("Новый", list.get(2));
+        assertEquals("Новый", list.get(2));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -127,7 +130,7 @@ public class VersionListTest {
         list.add("Ленивый");
         list.add("Ленивый");
 
-        Assert.assertEquals(2, list.indexOf("Ленивый"));
+        assertEquals(2, list.indexOf("Ленивый"));
     }
 
     @Test
@@ -139,21 +142,21 @@ public class VersionListTest {
         list.add("Ленивый");
         list.add("Ленивый");
 
-        Assert.assertEquals(3, list.lastIndexOf("Ленивый"));
+        assertEquals(3, list.lastIndexOf("Ленивый"));
     }
 
     @Test
     public void getInitVersionTest() {
 
         VersionalList<String> list = new VersionList<>();
-        Assert.assertEquals(2, list.getVersionsList().size());
+        assertEquals(2, list.getVersionsList().size());
     }
 
     @Test
     public void initialLastVersionStringTest() {
 
         VersionalList<String> list = new VersionList<>();
-        Assert.assertEquals("1.0", list.getLastFullVersion());
+        assertEquals("1.0", list.getLastFullVersion());
     }
 
     @Test
@@ -163,7 +166,7 @@ public class VersionListTest {
         list.add("Let"); // v1.1
         list.add("it"); // v1.2
         list.add("happen"); // v1.3
-        Assert.assertEquals("1.3", list.getLastFullVersion());
+        assertEquals("1.3", list.getLastFullVersion());
     }
 
     @Test
@@ -184,7 +187,7 @@ public class VersionListTest {
             String element1 = versionalList.get(i);
             String element2 = list.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -224,7 +227,7 @@ public class VersionListTest {
             String element1 = versionalList.get(i);
             String element2 = list.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -236,7 +239,7 @@ public class VersionListTest {
         versionalList.add("Void");
         versionalList.remove(0);
 
-        Assert.assertEquals(1, versionalList.size());
+        assertEquals(1, versionalList.size());
     }
 
     @Test
@@ -247,7 +250,7 @@ public class VersionListTest {
         versionalList.add("Void");
         versionalList.remove("The");
 
-        Assert.assertEquals(1, versionalList.size());
+        assertEquals(1, versionalList.size());
     }
 
     @Test
@@ -275,7 +278,7 @@ public class VersionListTest {
             String element1 = sourceList.get(i);
             String element2 = list.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -304,7 +307,7 @@ public class VersionListTest {
             String element1 = sourceList.get(i);
             String element2 = list.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -337,7 +340,7 @@ public class VersionListTest {
             String element1 = sourceList.get(i);
             String element2 = stringList.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -371,7 +374,7 @@ public class VersionListTest {
             String element1 = sourceList.get(i);
             String element2 = stringList.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -405,7 +408,7 @@ public class VersionListTest {
             String element1 = sourceList.get(i);
             String element2 = stringList.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -436,7 +439,7 @@ public class VersionListTest {
             String element1 = sourceList.get(i);
             String element2 = stringList.get(i);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -471,7 +474,7 @@ public class VersionListTest {
             String element1 = sourceList.get(j);
             String element2 = stringList.get(j);
 
-            Assert.assertTrue(element1.equals(element2));
+            assertTrue(element1.equals(element2));
         }
     }
 
@@ -500,18 +503,26 @@ public class VersionListTest {
 
         List<String> list = versionalList.getVersionalList(String.format("1.%d", version), ArrayList.class);
 
-        Assert.assertTrue(list.get(2).equals("the"));
+        assertTrue(list.get(2).equals("the"));
     }
 
     @Test
-    public void iteratorTest(){
+    public void iteratorTest() {
 
-        String prey="Prey";
-        String the="The";
-        String neighbourhood="Neighbourhood";
-        String wiped="Wiped";
-        String out="Out";
-        String exclamationMark="!";
+        String prey = "Prey";
+        String the = "The";
+        String neighbourhood = "Neighbourhood";
+        String wiped = "Wiped";
+        String out = "Out";
+        String exclamationMark = "!";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(prey);
+        sourceList.add(the);
+        sourceList.add(neighbourhood);
+        sourceList.add(wiped);
+        sourceList.add(out);
+        sourceList.add(exclamationMark);
 
         VersionalList<String> versionalList = new VersionList<>();
         versionalList.add(prey);
@@ -520,5 +531,14 @@ public class VersionListTest {
         versionalList.add(wiped);
         versionalList.add(out);
         versionalList.add(exclamationMark);
+
+        Iterator iterator = versionalList.listIterator();
+
+        int i = 0;
+
+        while (iterator.hasNext()) {
+
+            assertEquals(sourceList.get(i++), (String) iterator.next());
+        }
     }
 }
