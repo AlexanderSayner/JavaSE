@@ -780,6 +780,54 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         return this.listIterator(0);
     }
 
+    /**
+     * По версии
+     *
+     * @param version
+     * @return
+     */
+    public ListIterator<E> listIterator(String version) {
+        return listIterator(version, ArrayList.class);
+    }
+
+    /**
+     * По версии c указанием класса
+     *
+     * @param version
+     * @param listImplementation
+     * @return
+     */
+    public ListIterator<E> listIterator(String version, Class<? extends List> listImplementation) {
+
+        List<E> result = getVersionalList(version, listImplementation);
+        return result.listIterator();
+    }
+
+    /**
+     * По времени
+     *
+     * @param hour
+     * @param minute
+     * @return
+     */
+    public ListIterator<E> listIterator(int hour, int minute) {
+        return listIterator(hour, minute, ArrayList.class);
+    }
+
+    /**
+     * По времени с указанием класса
+     *
+     * @param hour
+     * @param minute
+     * @param listImplementation
+     * @return
+     */
+    public ListIterator<E> listIterator(int hour, int minute, Class<? extends List> listImplementation) {
+
+        List<E> result = getVersionalList(hour, minute, listImplementation);
+        return result.listIterator();
+    }
+
     @Override
     public ListIterator<E> listIterator(final int index) {
 
