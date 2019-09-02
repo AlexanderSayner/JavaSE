@@ -8,11 +8,48 @@ import sayner.sandbox.liba.entities.sectionsimpl.StableTemperatureSection;
 import sayner.sandbox.liba.mediator.LoadMaster;
 import sayner.sandbox.liba.mediator.impl.LoadMasterImpl;
 import sayner.sandbox.liba.observer.exd.PlaneDestinationData;
+import sayner.sandbox.versionlist.VersionList;
+import sayner.sandbox.versionlist.VersionalList;
 
 import java.util.*;
 
 @Log4j2
 public class Application {
+
+    public static void iteratorTest() {
+
+        String prey = "Prey";
+        String the = "The";
+        String neighbourhood = "Neighbourhood";
+        String wiped = "Wiped";
+        String out = "Out";
+        String exclamationMark = "!";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(prey);
+        sourceList.add(the);
+        sourceList.add(neighbourhood);
+        sourceList.add(wiped);
+        sourceList.add(out);
+        sourceList.add(exclamationMark);
+
+        VersionalList<String> versionalList = new VersionList<>();
+        versionalList.add(prey);
+        versionalList.add(the);
+        versionalList.add(neighbourhood);
+        versionalList.add(wiped);
+        versionalList.add(out);
+        versionalList.add(exclamationMark);
+
+        Iterator iterator = versionalList.listIterator();
+
+        int i = 0;
+
+        while (iterator.hasNext()) {
+
+            log.warn(sourceList.get(i++), (String) iterator.next());
+        }
+    }
 
     private static void externalLibExample() {
 
@@ -103,8 +140,11 @@ public class Application {
 
         Thread thread = new Thread(Application::externalLibExample);
         thread.setName("Пример библиотеки");
+        Thread thread1 = new Thread(Application::iteratorTest);
+        thread.setName("тестирование итератора");
 
         thread.start();
+        thread1.start();
 
         log.info("Application finished");
     }

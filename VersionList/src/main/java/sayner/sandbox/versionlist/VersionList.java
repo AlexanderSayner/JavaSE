@@ -48,9 +48,16 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         this.modifications = initiateVersionalList();
     }
 
+    /**
+     * Версионный список будет с элементами того же типа, что и в коллекции
+     *
+     * @param collection
+     */
     public VersionList(Collection<? extends E> collection) {
 
+        // актуальные данные есть
         this.internal = collection.toArray();
+        // размер есть
         if ((this.size = this.internal.length) != 0) {
             if (this.internal.getClass() != Object[].class) {
                 this.internal = Arrays.copyOf(this.internal, this.size, Object[].class);
@@ -59,8 +66,29 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
             this.internal = EMPTY_ELEMENTDATA;
         }
 
-        // КОСТЫЛЬ !!!
-        this.modifications = initiateVersionalList();
+        // если попала на вход обычная коллекция, то создаём первую версию
+        if (collection instanceof VersionList) {
+
+            // историю изменений созраняем
+            // история будет паралельно вестись в том объекте, что был передан в конструктор и во вновь созданном
+            this.modifications = ((VersionList) collection).modifications;
+
+        } else {
+
+            this.modifications = initiateVersionalList();
+
+            Map<Action, List<E>> actionListMap = new LinkedHashMap<>();
+
+            List<E> list = new ArrayList<>();
+
+            for (E anyObj : collection) {
+                list.add(anyObj);
+            }
+
+            actionListMap.put(Action.Created, list);
+
+            createNextVersion(actionListMap, 0, list.size() - 1);
+        }
     }
 
     //
@@ -780,12 +808,59 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         return this.listIterator(0);
     }
 
+    /**
+     * По версии
+     *
+     * @param version
+     * @return
+     */
+    public ListIterator<E> listIterator(String version) {
+        return listIterator(version, ArrayList.class);
+    }
+
+    /**
+     * По версии c указанием класса
+     *
+     * @param version
+     * @param listImplementation
+     * @return
+     */
+    public ListIterator<E> listIterator(String version, Class<? extends List> listImplementation) {
+
+        List<E> result = getVersionalList(version, listImplementation);
+        return result.listIterator();
+    }
+
+    /**
+     * По времени
+     *
+     * @param hour
+     * @param minute
+     * @return
+     */
+    public ListIterator<E> listIterator(int hour, int minute) {
+        return listIterator(hour, minute, ArrayList.class);
+    }
+
+    /**
+     * По времени с указанием класса
+     *
+     * @param hour
+     * @param minute
+     * @param listImplementation
+     * @return
+     */
+    public ListIterator<E> listIterator(int hour, int minute, Class<? extends List> listImplementation) {
+
+        List<E> result = getVersionalList(hour, minute, listImplementation);
+        return result.listIterator();
+    }
+
     @Override
     public ListIterator<E> listIterator(final int index) {
 
         this.rangeCheckForAdd(index);
-        //return new VersionList<>().ListItr(index);
-        return null;
+        return new VersionalListIterator(index);
     }
 
     /**
@@ -923,5 +998,132 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
     public E getVersionedElement(int index, Integer hour, Integer minute) {
 
         return getVersionalList(hour, minute).get(index);
+    }
+
+    /**
+     * Unfortunately, I have to do this shit
+     * При обычном использовании инератор работает как обычный итератор,
+     * но стоит указать версию, как он превращается в версионный
+     */
+    private class VersionalIterator implements Iterator<E> {
+
+        Integer cursor = 0; // index of next element to return
+        Integer lastReturned = -1; // index of last element returned; -1 if no such
+        // Защита в мультипоточности
+        Integer expectedModCount = VersionList.this.modCount;
+
+        @Override
+        public boolean hasNext() {
+            return this.cursor < VersionList.this.size;
+        }
+
+        @Override
+        public E next() {
+            // Надо, т.к. курсор в мультипотоке полетит иначе
+            checkForComodification();
+
+            if (this.cursor >= size)
+                throw new NoSuchElementException("Похоже, список закончился");
+
+            if (this.cursor >= VersionList.this.internal.length)
+                throw new ConcurrentModificationException();
+
+            return (E) VersionList.this.internal[this.lastReturned = this.cursor++];
+        }
+
+        @Override
+        public void remove() {
+
+            if (this.lastReturned < 0)
+                throw new IllegalStateException();
+            checkForComodification();
+
+            try {
+                VersionList.this.remove(this.lastReturned);
+                // Курсор должен вернуться на 1 шаг, чтобы не "улететь" дальше
+                this.cursor = this.lastReturned;
+                this.lastReturned = -1;
+                this.expectedModCount = VersionList.this.modCount;
+
+            } catch (IndexOutOfBoundsException ex) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        // Переопределять нельзя (package-private)
+        final void checkForComodification() {
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+        }
+    }
+
+    private class VersionalListIterator extends VersionalIterator implements ListIterator<E> {
+
+        public VersionalListIterator(Integer index) {
+
+            super();
+            this.cursor = index;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return this.cursor > 0;
+        }
+
+        @Override
+        public E previous() {
+
+            checkForComodification();
+
+            int i = cursor - 1; // Чтобы курсор не слетел в случае исключения
+            if (i < 0)
+                throw new NoSuchElementException();
+            if (i >= VersionList.this.internal.length)
+                throw new ConcurrentModificationException();
+            cursor = i;
+
+            return (E) VersionList.this.internal[this.lastReturned = i];
+        }
+
+        @Override
+        public int nextIndex() {
+            return this.cursor; // Потому что он прибавляется после получения элемента внутри next()
+        }
+
+        @Override
+        public int previousIndex() {
+            return this.cursor - 1;
+        }
+
+        @Override
+        public void set(E element) {
+
+            if (this.lastReturned < 0)
+                throw new IllegalStateException();
+            checkForComodification();
+
+            try {
+                VersionList.this.set(this.lastReturned, element);
+            } catch (IndexOutOfBoundsException ex) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        @Override
+        public void add(E element) {
+
+            checkForComodification();
+
+            try {
+                int i = cursor;
+                VersionList.this.add(i, element);
+                cursor = i + 1;
+                this.lastReturned = -1;
+                this.expectedModCount = VersionList.this.modCount;
+
+            } catch (IndexOutOfBoundsException ex) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 }
