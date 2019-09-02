@@ -48,9 +48,16 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
         this.modifications = initiateVersionalList();
     }
 
+    /**
+     * Версионный список будет с элементами того же типа, что и в коллекции
+     *
+     * @param collection
+     */
     public VersionList(Collection<? extends E> collection) {
 
+        // актуальные данные есть
         this.internal = collection.toArray();
+        // размер есть
         if ((this.size = this.internal.length) != 0) {
             if (this.internal.getClass() != Object[].class) {
                 this.internal = Arrays.copyOf(this.internal, this.size, Object[].class);
@@ -59,8 +66,29 @@ public class VersionList<E> extends AbstractList<E> implements VersionalList<E>,
             this.internal = EMPTY_ELEMENTDATA;
         }
 
-        // КОСТЫЛЬ !!!
-        this.modifications = initiateVersionalList();
+        // если попала на вход обычная коллекция, то создаём первую версию
+        if (collection instanceof VersionList) {
+
+            // историю изменений созраняем
+            // история будет паралельно вестись в том объекте, что был передан в конструктор и во вновь созданном
+            this.modifications = ((VersionList) collection).modifications;
+
+        } else {
+
+            this.modifications = initiateVersionalList();
+
+            Map<Action, List<E>> actionListMap = new LinkedHashMap<>();
+
+            List<E> list = new ArrayList<>();
+
+            for (E anyObj : collection) {
+                list.add(anyObj);
+            }
+
+            actionListMap.put(Action.Created, list);
+
+            createNextVersion(actionListMap, 0, list.size() - 1);
+        }
     }
 
     //

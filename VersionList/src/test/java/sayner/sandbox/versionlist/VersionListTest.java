@@ -3,6 +3,8 @@ package sayner.sandbox.versionlist;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -443,6 +445,7 @@ public class VersionListTest {
         }
     }
 
+    @Ignore
     @Test(expected = IndexOutOfBoundsException.class)
     public void getVersionedListByYourTime() throws InterruptedException {
 
@@ -540,5 +543,81 @@ public class VersionListTest {
 
             assertEquals(sourceList.get(i++), (String) iterator.next());
         }
+    }
+
+    @Test
+    public void collectionInitializationTest() {
+
+        String cleanse = "Cleanse";
+        String the = "The";
+        String bloodlines = "Bloodlines";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(cleanse);
+        sourceList.add(the);
+        sourceList.add(bloodlines);
+
+        VersionList<String> versionList = new VersionList<>();
+        versionList.add(cleanse); // v1.1
+        versionList.add(the); // v1.2
+        versionList.add(bloodlines); // v1.3
+
+        List<String> stringList = versionList.getVersionalList("1.3");
+
+        // Передаётся обычный список, версий нет
+        VersionList<String> newVersionList = new VersionList(stringList);
+
+        // Добавили каскад элементов одним действием, следовательно и версия будет создана одна
+        stringList = newVersionList.getVersionalList("1.1");
+
+        int version = 3;
+
+        for (int j = 0; j < version; j++) {
+
+            String element1 = sourceList.get(j);
+            String element2 = newVersionList.get(j);
+
+            assertTrue(element1.equals(element2));
+        }
+    }
+
+    @Test
+    public void versionalCollectionInitializationTest() {
+
+        String cleanse = "Cleanse";
+        String the = "The";
+        String bloodlines = "Bloodlines";
+
+        List<String> sourceList = new ArrayList<>();
+        sourceList.add(cleanse);
+        sourceList.add(the);
+        sourceList.add(bloodlines);
+
+        VersionList<String> versionList = new VersionList<>();
+        versionList.add(cleanse); // v1.1
+        versionList.add(the); // v1.2
+        versionList.add(bloodlines); // v1.3
+
+        // Передаётся версионный список
+        VersionList<String> newVersionList = new VersionList(versionList);
+
+        // Добавили версионный список, версии сохраняются
+        List<String> stringList = newVersionList.getVersionalList("1.3");
+
+        int version = 3;
+
+        for (int j = 0; j < version; j++) {
+
+            String element1 = sourceList.get(j);
+            String element2 = newVersionList.get(j);
+
+            assertTrue(element1.equals(element2));
+        }
+
+        // Следующим этапом проверяется зависимость между двумя созданными списками
+        String apex = "Apex";
+        versionList.add(apex); // v1.4
+
+        Assert.assertEquals(apex, newVersionList.getVersionedElement(3, "1.4"));
     }
 }
